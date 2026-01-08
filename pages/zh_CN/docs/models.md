@@ -13,17 +13,18 @@ GORM 通过将 Go 结构体（Go structs） 映射到数据库表来简化数据
 
 ```go
 type User struct {
-  ID           uint           // Standard field for the primary key
-  Name         string         // A regular string field
-  Email        *string        // A pointer to a string, allowing for null values
-  Age          uint8          // An unsigned 8-bit integer
-  Birthday     *time.Time     // A pointer to time.Time, can be null
-  MemberNumber sql.NullString // Uses sql.NullString to handle nullable strings
-  ActivatedAt  sql.NullTime   // Uses sql.NullTime for nullable time fields
-  CreatedAt    time.Time      // Automatically managed by GORM for creation time
-  UpdatedAt    time.Time      // Automatically managed by GORM for update time
-  ignored      string         // fields that aren't exported are ignored
+  ID           uint           // 主键标准字段
+  Name         string         // 普通字符串字段
+  Email        *string        // 指向字符串的指针，允许为空（null）
+  Age          uint8          // 无符号 8 位整数
+  Birthday     *time.Time     // 指向 time.Time 的指针，可以为空
+  MemberNumber sql.NullString // 使用 sql.NullString 来处理可为空的字符串
+  ActivatedAt  sql.NullTime   // 使用 sql.NullTime 来处理可为空的时间字段
+  CreatedAt    time.Time      // GORM 自动管理的创建时间
+  UpdatedAt    time.Time      // GORM 自动管理的更新时间
+  ignored      string         // 未导出的字段会被忽略，不会映射到数据库
 }
+
 ```
 
 在此模型中：
@@ -32,7 +33,7 @@ type User struct {
 - 指向 `*string` 和 `*time.Time` 类型的指针表示可空字段。
 - 来自 `database/sql` 包的 `sql.NullString` 和 `sql.NullTime` 用于具有更多控制的可空字段。
 - `CreatedAt` 和 `UpdatedAt` 是特殊字段，当记录被创建或更新时，GORM 会自动向内填充当前时间。
-- Non-exported fields (starting with a small letter) are not mapped
+- 未导出的字段（以小写字母开头）不会被映射
 
 除了 GORM 中模型声明的基本特性外，强调下通过 serializer 标签支持序列化也很重要。 此功能增强了数据存储和检索的灵活性，特别是对于需要自定义序列化逻辑的字段。详细说明请参见 [Serializer](serializer.html)。
 
@@ -40,7 +41,7 @@ type User struct {
 
 1. **主键**：GORM 使用一个名为`ID` 的字段作为每个模型的默认主键。
 
-2. **表名**：默认情况下，GORM 将结构体名称转换为 `snake_case` 并为表名加上复数形式。 For instance, a `User` struct becomes `users` in the database, and a `GormUserName` becomes `gorm_user_names`.
+2. **表名**：默认情况下，GORM 将结构体名称转换为 `snake_case` 并为表名加上复数形式。 例如，一个 `User` 结构体会对应数据库中的 `users` 表，而 `GormUserName` 会对应 `gorm_user_names` 表。
 
 3. **列名**：GORM 自动将结构体字段名称转换为 `snake_case` 作为数据库中的列名。
 
@@ -179,7 +180,8 @@ type Blog struct {
 
 ### <span id="tags">字段标签</span>
 
-Tags are optional to use when declaring models, GORM supports the following tags: Tags are case insensitive, however `camelCase` is preferred. If multiple tags are used they should be separated by a semicolon (`;`). Characters that have special meaning to the parser can be escaped with a backslash (`\`) allowing them to be used as parameter values.
+在声明模型时，字段标签是可选的。GORM 支持以下标签：标签不区分大小写，但推荐使用 `camelCase` 风格。如果使用多个标签，应使用分号 (`;`) 分隔。对解析器有特殊意义的字符，可以使用反斜杠 (`\`) 转义，从而在标签参数中使用这些字符。
+
 
 | 标签名                    | 说明                                                                                                                                                                                                                                         |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
